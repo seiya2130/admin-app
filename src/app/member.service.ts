@@ -68,6 +68,18 @@ export class MemberService {
     );
   }
 
+  searchMembers(term: string): Observable<Member[]> {
+    if(!term.trim()){
+      return of([]);
+    }
+
+    return this.http.get<Member[]>(`${this.membersUrl}/?name=${term}`)
+    .pipe(
+      tap(_ => this.log(`${term}にマッチする社員データが見つかりました`)),
+      catchError(this.handleError<Member[]>('searchMember', []))
+    );
+  }
+
   deleteMember(member: Member | number): Observable<Member> {
    const id = typeof member === 'number' ? member : member.id;
    const url = `${this.membersUrl}/${id}`;
